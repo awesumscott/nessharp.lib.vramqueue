@@ -22,11 +22,12 @@ namespace NESSharp.Lib.VRamQueue.Ops {
 				_liveQueue.Push(addr.Lo);
 			});
 		}
-		public void Set(Var16 addr) {
+		public void Set(VarN n) {
+			if (n.Size != 2) throw new Exception("Value must be 2 bytes");
 			_liveQueue.Write(Y, () => {
 				_liveQueue.Push(_opAddr);
-				_liveQueue.Push(addr.Hi);
-				_liveQueue.Push(addr.Lo);
+				_liveQueue.Push(n.Address[1]);
+				_liveQueue.Push(n.Address[0]);
 			});
 		}
 		[CodeSection]

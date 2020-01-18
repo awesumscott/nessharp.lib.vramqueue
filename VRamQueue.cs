@@ -16,11 +16,11 @@ namespace NESSharp.Lib.VRamQueue {
 	/// 4. Call queuing helpers directly from any other bank and module--no bankswitching necessary
 	/// </remarks>
 	public static class VRamQueue {
-		private static Var8 _done;
+		private static VByte _done;
 		private static LiveQueue _liveQueue;
 		private static OpLabel _executeLoopContinue;
 		private static OpLabel _executeLoopBreak;
-		private static Var16 _handlerAddress;
+		private static VWord _handlerAddress;
 		private static Option[] _options;
 		
 		public static Ops.Address Address;
@@ -34,8 +34,8 @@ namespace NESSharp.Lib.VRamQueue {
 		private static U8 _optionId = 0;
 
 		static VRamQueue() {
-			_done = Var8.New(ram, "VRamQueue_done");
-			_handlerAddress = Var16.New(ram, "VRamQueue_handlerAddress");
+			_done = VByte.New(ram, "VRamQueue_done");
+			_handlerAddress = VWord.New(ram, "VRamQueue_handlerAddress");
 			_executeLoopContinue = Label.New();
 			_executeLoopBreak = Label.New();
 		}
@@ -120,7 +120,7 @@ namespace NESSharp.Lib.VRamQueue {
 		public static void Push(U8 val) {
 			_liveQueue.Push(val);
 		}
-		public static void Push(Var8 val) {
+		public static void Push(VByte val) {
 			_liveQueue.Push(val);
 		}
 		public static void Push(Func<RegisterA> val) {

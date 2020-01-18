@@ -42,7 +42,7 @@ namespace NESSharp.Lib.VRamQueue.Ops {
 			_liveQueue.Push(_opTileArray);
 			_liveQueue.Push(len);
 		}
-		public void Draw_Manual(Var8 len) {
+		public void Draw_Manual(VByte len) {
 			_liveQueue.PushStart(Y);
 			_liveQueue.Push(_opTileArray);
 			_liveQueue.Push(len);

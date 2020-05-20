@@ -20,7 +20,7 @@ namespace NESSharp.Lib.VRamQueue {
 		private static LiveQueue _liveQueue;
 		private static OpLabel _executeLoopContinue;
 		private static OpLabel _executeLoopBreak;
-		private static VWord _handlerAddress;
+		//private static VWord _handlerAddress;
 		private static Option[] _options;
 		
 		public static Ops.Address Address;
@@ -32,10 +32,11 @@ namespace NESSharp.Lib.VRamQueue {
 		public static Ops.FromAddress FromAddress;
 		public static Ops.Palettes Palettes;
 		private static U8 _optionId = 0;
+		private static LabelList HandlerList;
 
 		static VRamQueue() {
 			_done = VByte.New(ram, "VRamQueue_done");
-			_handlerAddress = VWord.New(ram, "VRamQueue_handlerAddress");
+			//_handlerAddress = VWord.New(ram, "VRamQueue_handlerAddress");
 			_executeLoopContinue = Label.New();
 			_executeLoopBreak = Label.New();
 		}
@@ -91,6 +92,8 @@ namespace NESSharp.Lib.VRamQueue {
 				Palettes = new Ops.Palettes(AddHandler, _liveQueue, _executeLoopContinue, _executeLoopBreak);
 				Include.Module(Palettes);
 			}
+
+			HandlerList = new LabelList(_opHandlers.ToArray());
 		}
 
 		public enum Option {
@@ -141,12 +144,9 @@ namespace NESSharp.Lib.VRamQueue {
 		public static void Execute() {
 			Action loopBody = () => {
 				_done.Set(0);
-				X.Set(_liveQueue.Peek());
-							
+
 				Comment("Use current Op to find the op handler address, then indirect JMP");
-				_handlerAddress.Lo.Set(LabelFor(Handler_Lo).Offset(X));
-				_handlerAddress.Hi.Set(LabelFor(Handler_Hi).Offset(X));
-				GoTo_Indirect(_handlerAddress);
+				HandlerList.GoTo(_liveQueue.Peek());
 
 				Use(_executeLoopContinue);
 				_liveQueue.Pop();
@@ -182,8 +182,6 @@ namespace NESSharp.Lib.VRamQueue {
 			GoTo(_executeLoopBreak);
 		}
 		[DataSection]
-		private static void Handler_Lo() => Raw(_opHandlers.Select(x => x.Lo()).ToArray());
-		[DataSection]
-		private static void Handler_Hi() => Raw(_opHandlers.Select(x => x.Hi()).ToArray());
+		public static void HandlerAddresses() => HandlerList.WriteList();
 	}
 }

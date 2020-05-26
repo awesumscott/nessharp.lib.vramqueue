@@ -15,45 +15,45 @@ namespace NESSharp.Lib.VRamQueue {
 	/// 3. Call Execute() in bank X, and make sure it gets run within VBlank
 	/// 4. Call queuing helpers directly from any other bank and module--no bankswitching necessary
 	/// </remarks>
-	public static class VRamQueue {
-		private static VByte _done;
-		private static LiveQueue _liveQueue;
-		private static OpLabel _executeLoopContinue;
-		private static OpLabel _executeLoopBreak;
+	public class VRamQueue : Module {
+		private VByte _done;
+		private LiveQueue _liveQueue;
+		private OpLabel _executeLoopContinue;
+		private OpLabel _executeLoopBreak;
 		//private static VWord _handlerAddress;
-		private static Option[] _options;
+		private Option[] _options;
 		
-		public static Ops.Address Address;
-		public static Ops.Increment Increment;
-		public static Ops.Pause Pause;
-		public static Ops.Tile Tile;
-		public static Ops.TileArray TileArray;
-		public static Ops.TilesRLE TilesRLE;
-		public static Ops.FromAddress FromAddress;
-		public static Ops.Palettes Palettes;
-		private static U8 _optionId = 0;
-		private static LabelList HandlerList;
+		public Ops.Address Address;
+		public Ops.Increment Increment;
+		public Ops.Pause Pause;
+		public Ops.Tile Tile;
+		public Ops.TileArray TileArray;
+		public Ops.TilesRLE TilesRLE;
+		public Ops.FromAddress FromAddress;
+		public Ops.Palettes Palettes;
+		private U8 _optionId = 0;
+		private LabelList HandlerList;
 
-		static VRamQueue() {
-			_done = VByte.New(ram, "VRamQueue_done");
+		public void Setup(U16 pageStart, U8 length, params Option[] options) {
+			_done = VByte.New(Ram, "VRamQueue_done");
 			//_handlerAddress = VWord.New(ram, "VRamQueue_handlerAddress");
 			_executeLoopContinue = Label.New();
 			_executeLoopBreak = Label.New();
-		}
 
-		public static void Init(U16 pageStart, U8 length, params Option[] options) {
-			var VRAM = ram.Allocate(Addr(pageStart), Addr((U16)(pageStart + 0xFF)));
-			_liveQueue = LiveQueue.New(zp, ram, VRAM, length, "vramQueue", Op.Stop);
+			var VRAM = Ram.Allocate(Addr(pageStart), Addr((U16)(pageStart + 0xFF)));
+			_liveQueue = LiveQueue.New(Zp, Ram, VRAM, length, "vramQueue", Op.Stop);
 
 			_options = options ?? new Option[0];
+
+			OptionModules();
 			
 		}
-		private static U8 AddHandler(OpLabel handlerLabel) {
+		private U8 AddHandler(OpLabel handlerLabel) {
 			_opHandlers.Add(handlerLabel);
 			return _optionId++;
 		}
-		[Dependencies]
-		public static void OptionModules() {
+		//[Dependencies]
+		public void OptionModules() {
 			_opHandlers = new List<OpLabel>(){
 				LabelFor(Handler_NOP),
 				LabelFor(Handler_Stop),
@@ -113,35 +113,41 @@ namespace NESSharp.Lib.VRamQueue {
 			public static readonly U8 Stop			= 0x01;		//Stop Here -- Decrement index so execution will wait here until it is cleared and new commands are added to queue
 			public static readonly U8 EOF			= 0x02;		//End of frame -- increment and resume parsing next frame
 		}
-		private static List<OpLabel> _opHandlers;
-		public static void Reset() {
+		private List<OpLabel> _opHandlers;
+		public void Reset() {
 			if (_options.Contains(Option.Pause))
 				Pause.Reset();
 			_done.Set(1);
 			_liveQueue.Reset();
 		}
-		public static void Push(U8 val) {
+		public void Push(U8 val) {
 			_liveQueue.Push(val);
 		}
-		public static void Push(VByte val) {
+		public void Push(VByte val) {
 			_liveQueue.Push(val);
 		}
-		public static void Push(Func<RegisterA> val) {
+		public void Push(Func<RegisterA> val) {
 			_liveQueue.Push(val.Invoke());
 		}
-		public static void DonePushing() {
+		public void DonePushing() {
 			_liveQueue.PushDone();
 		}
-		public static void EndFrame() {
+		public void EndFrame() {
 			_liveQueue.PushOnce(Y, Op.EOF);
 		}
+		public void EndFrameROM() {
+			Raw(Op.EOF);
+		}
+		public void NOPROM() {
+			Raw(Op.NOP);
+		}
 
-		public static Condition Done() =>		_done.NotEquals(0);
-		public static Condition NotDone() =>	_done.Equals(0);
-		public static Condition Empty() =>		_liveQueue.Empty();
-		public static Condition NotEmpty() =>	_liveQueue.NotEmpty();
+		public Condition Done() =>		_done.NotEquals(0);
+		public Condition NotDone() =>	_done.Equals(0);
+		public Condition Empty() =>		_liveQueue.Empty();
+		public Condition NotEmpty() =>	_liveQueue.NotEmpty();
 
-		public static void Execute() {
+		public void Execute() {
 			Action loopBody = () => {
 				_done.Set(0);
 
@@ -165,23 +171,23 @@ namespace NESSharp.Lib.VRamQueue {
 		}
 		
 		[CodeSection]
-		private static void Handler_NOP() {
+		private void Handler_NOP() {
 			GoTo(_executeLoopContinue);
 		}
 		[CodeSection]
-		private static void Handler_Stop() {
+		private void Handler_Stop() {
 			//Skip incrementing Y, so next read takes place at the same index, and rely on Stop being overwritten
 			Comment("Stop updates until more data is queued");
 			_done.Set(1);
 			GoTo(_executeLoopBreak);
 		}
 		[CodeSection]
-		private static void Handler_EOF() {
+		private void Handler_EOF() {
 			Comment("End of frame");
 			_liveQueue.Unsafe_Pop(Y);
 			GoTo(_executeLoopBreak);
 		}
 		[DataSection]
-		public static void HandlerAddresses() => HandlerList.WriteList();
+		public void HandlerAddresses() => HandlerList.WriteList();
 	}
 }

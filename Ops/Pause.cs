@@ -14,7 +14,7 @@ namespace NESSharp.Lib.VRamQueue.Ops {
 		public Pause(Func<OpLabel, U8> handlerListAdd, LiveQueue queue, OpLabel _, OpLabel execBreak) {
 			_liveQueue = queue;
 			_executeLoopBreak = execBreak;
-			_pauseCount = VByte.New(ram, "VRamQueue_pauseCount");
+			_pauseCount = VByte.New(GlobalRam, "VRamQueue_pauseCount");
 			_opPause = handlerListAdd(LabelFor(Handler));
 		}
 		public void For(U8 frames) {

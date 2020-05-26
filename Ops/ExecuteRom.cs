@@ -1,23 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 using NESSharp.Common;
 using NESSharp.Core;
 using static NESSharp.Core.AL;
 
 namespace NESSharp.Lib.VRamQueue.Ops {
-	public class FromAddress {
-		private U8 _opFromAddress;
+	public class ExecuteRom {
+		private U8 _opExecuteRom;
 		private LiveQueue _liveQueue;
 		private OpLabel _executeLoopContinue;
-		public FromAddress(Func<OpLabel, U8> handlerListAdd, LiveQueue queue, OpLabel execContinue, OpLabel _) {
+		private Ptr _ptrRomStart;
+		public ExecuteRom(Func<OpLabel, U8> handlerListAdd, LiveQueue queue, OpLabel execContinue, OpLabel _) {
 			_liveQueue = queue;
 			_executeLoopContinue = execContinue;
-			_opFromAddress = handlerListAdd(LabelFor(Handler));
+			_opExecuteRom = handlerListAdd(LabelFor(Handler));
+			_ptrRomStart = Ptr.New("VRamQueue_ExecuteRom_ptrRomStart");
 		}
 		public void Write(Core.Address ramStart, U8 len) {
 			_liveQueue.Write(Y, () => {
-				_liveQueue.Push(_opFromAddress);
+				_liveQueue.Push(_opExecuteRom);
 				_liveQueue.Push(ramStart.Lo);
 				_liveQueue.Push(ramStart.Hi);
 				_liveQueue.Push(len);
@@ -25,26 +28,29 @@ namespace NESSharp.Lib.VRamQueue.Ops {
 		}
 		public void Write(OpLabel lbl, U8 len) {
 			_liveQueue.Write(Y, () => {
-				_liveQueue.Push(_opFromAddress);
+				_liveQueue.Push(_opExecuteRom);
 				_liveQueue.Push(lbl.Lo());
 				_liveQueue.Push(lbl.Hi());
-				_liveQueue.Push(len);
 			});
 		}
 		public void WriteROM(OpLabel lbl, U8 len) {
-			Raw(_opFromAddress);
+			Raw(_opExecuteRom);
 			Raw(lbl.Lo());
 			Raw(lbl.Hi());
-			Raw(len);
 		}
 		[CodeSection]
 		private void Handler() {
 			_liveQueue.Unsafe_Pop(Y);
-			TempPtr0.Lo.Set(_liveQueue.Unsafe_Peek(Y));
+			_ptrRomStart.Lo.Set(_liveQueue.Unsafe_Peek(Y));
 			_liveQueue.Unsafe_Pop(Y);
-			TempPtr0.Hi.Set(_liveQueue.Unsafe_Peek(Y));
+			_ptrRomStart.Hi.Set(_liveQueue.Unsafe_Peek(Y));
 			_liveQueue.Unsafe_Pop(Y);
-			X.Set(_liveQueue.Unsafe_Peek(Y)); //Number of bytes of data
+			A.Set(_liveQueue.Unsafe_Peek(Y)); //Number of bytes of data
+
+			Loop.While(() => A.NotEquals(VRamQueue.Op.NOP), () => {
+				
+			});
+			
 
 			Stack.Preserve(Y, () => {
 				Y.Set(0);

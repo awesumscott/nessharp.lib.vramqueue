@@ -30,6 +30,12 @@ namespace NESSharp.Lib.VRamQueue.Ops {
 				_liveQueue.Push(n.Address[0]);
 			});
 		}
+
+		public void SetROM(U16 addr) {
+			Raw(_opAddr);
+			Raw(addr.Lo, addr.Hi);
+		}
+
 		[CodeSection]
 		private void Handler() {
 			_liveQueue.Unsafe_Pop(Y);

@@ -35,13 +35,13 @@ namespace NESSharp.Lib.VRamQueue {
 		private LabelList HandlerList;
 
 		public void Setup(U16 pageStart, U8 length, params Option[] options) {
-			_done = VByte.New(Ram, "VRamQueue_done");
+			_done = VByte.New(Ram, $"{nameof(VRamQueue)}{nameof(_done)}");
 			//_handlerAddress = VWord.New(ram, "VRamQueue_handlerAddress");
 			_executeLoopContinue = Label.New();
 			_executeLoopBreak = Label.New();
 
 			var VRAM = Ram.Allocate(Addr(pageStart), Addr((U16)(pageStart + 0xFF)));
-			_liveQueue = LiveQueue.New(Zp, Ram, VRAM, length, "vramQueue", Op.Stop);
+			_liveQueue = LiveQueue.New(Zp, Ram, VRAM, length, $"{nameof(VRamQueue)}{nameof(_liveQueue)}", Op.Stop);
 
 			_options = options ?? new Option[0];
 
@@ -152,7 +152,7 @@ namespace NESSharp.Lib.VRamQueue {
 				_done.Set(0);
 
 				Comment("Use current Op to find the op handler address, then indirect JMP");
-				HandlerList.GoTo(_liveQueue.Peek());
+				HandlerList.GoTo(X.Set(_liveQueue.Peek()));
 
 				Use(_executeLoopContinue);
 				_liveQueue.Pop();

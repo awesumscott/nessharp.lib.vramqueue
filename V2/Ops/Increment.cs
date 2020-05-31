@@ -1,46 +1,37 @@
 ﻿using NESSharp.Common;
 using NESSharp.Core;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using static NESSharp.Core.AL;
 
-namespace NESSharp.Lib.VRamQueue.Ops {
-	public class Increment {
+namespace NESSharp.Lib.VRamQueue.V2.Ops {
+	public class Increment : VRamQueueOp {
 		private U8 _opHoriz;
 		private U8 _opVert;
 		private LiveQueue _liveQueue;
-		private OpLabel _executeLoopContinue;
-		public Increment(Func<OpLabel, U8> handlerListAdd, LiveQueue queue, OpLabel execContinue, OpLabel _) {
+		public override void AddHandlers() => Queue.Add(Handler_Horiz);
+		public Increment(Func<OpLabel, U8> handlerListAdd, LiveQueue queue) {
+			//TODO: add a way to store multiple op IDs, one per callback
 			_liveQueue = queue;
-			_executeLoopContinue = execContinue;
 			_opHoriz = handlerListAdd(LabelFor(Handler_Horiz));
 			_opVert = handlerListAdd(LabelFor(Handler_Vert));
 		}
 		public void Horizontal() {
 			_liveQueue.PushOnce(Y, _opHoriz);
 		}
-		public void HorizontalROM() {
-			Raw(_opHoriz);
-		}
 		public void Vertical() {
 			_liveQueue.PushOnce(Y, _opVert);
-		}
-		public void VerticalROM() {
-			Raw(_opVert);
 		}
 		[CodeSection]
 		private void Handler_Horiz() {
 			Comment("Increment writes horizontally");
 			NES.PPU.Control.Set(NES.PPU.LazyControl.Set(z => z.And(0b11111011)));
-			GoTo(_executeLoopContinue);
+			Queue.Continue();
 		}
-
 		[CodeSection]
 		private void Handler_Vert() {
 			Comment("Increment writes vertically");
 			NES.PPU.Control.Set(NES.PPU.LazyControl.Set(z => z.Or(0b100)));
-			GoTo(_executeLoopContinue);
+			Queue.Continue();
 		}
 	}
 }

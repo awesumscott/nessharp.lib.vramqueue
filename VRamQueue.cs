@@ -189,5 +189,42 @@ namespace NESSharp.Lib.VRamQueue {
 		}
 		[DataSection]
 		public void HandlerAddresses() => HandlerList.WriteList();
+		
+		public void CopyBlock(Action action) {
+			_liveQueue.PushRangeOnce(action);
+		}
+		//public void CopyBlock(Action block, VByte len) {
+		//	//make sure _liveQueue.Values.Index is actually in the register before using this
+		//	using (var stream = new Stream(block, len)) {
+		//		stream.CopyTo(_liveQueue.Values[Y]);
+		//	}
+		//	//TODO: increase livequeue's index by len
+		//}
+	}
+
+	public class Stream : IDisposable {
+		private Ptr _ptrSrc = TempPtr0;
+		private Ptr _ptrDest = TempPtr1;
+		private VByte _len;
+		public Stream(Action action, VByte len) {
+			_ptrSrc.PointTo(LabelFor(action));
+			_len = len;
+		}
+		public Stream CopyTo(Ptr dest) { //, RegisterX x) {
+			_ptrDest.PointTo(dest);
+			Loop.AscendWhile(Y.Set(0), () => Y.NotEquals(_len), () => {
+				_ptrDest[Y].Set(A.Set(_ptrSrc[Y]));
+			});
+			return this;
+		}
+		public Stream CopyTo(VByte dest) { //, RegisterX x) {
+			_ptrDest.PointTo(dest);
+			Loop.AscendWhile(Y.Set(0), () => Y.NotEquals(_len), () => {
+				_ptrDest[Y].Set(A.Set(_ptrSrc[Y]));
+			});
+			return this;
+		}
+
+		public void Dispose() {}
 	}
 }

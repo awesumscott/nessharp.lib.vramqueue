@@ -2,15 +2,15 @@
 using NESSharp.Core;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using static NESSharp.Core.AL;
 
-namespace NESSharp.Lib.VRamQueue.Ops {
-	public class TilesRLE {
+namespace NESSharp.Lib.VRamQueue.V2.Ops {
+	public class TilesRLE : VRamQueueOp {
 		private U8 _opTilesRLE;
 		private LiveQueue _liveQueue;
 		private OpLabel _executeLoopContinue;
+		public override void AddHandlers() => Queue.Add(Handler);
 		public TilesRLE(Func<OpLabel, U8> handlerListAdd, LiveQueue queue, OpLabel execContinue, OpLabel _) {
 			_liveQueue = queue;
 			_executeLoopContinue = execContinue;
@@ -22,26 +22,21 @@ namespace NESSharp.Lib.VRamQueue.Ops {
 				for (var i = 0; i < tile.Length; i++) { //using tile.length here so individual values can be pushed after this call
 					_liveQueue.Push(tile[i]);
 				}
-				_liveQueue.Push(VRamQueue.Op.NOP);
+				_liveQueue.Push(Queue.Op<NOP>().Id);
 			});
-		}
-		public void DrawROM(params U8[] tile) {
-			Raw(_opTilesRLE);
-			Raw(tile.Select(x => (byte)x).ToArray());
-			Raw(VRamQueue.Op.NOP);
 		}
 		public void Draw_Manual() {
 			_liveQueue.PushStart(Y);
 			_liveQueue.Push(_opTilesRLE);
 		}
 		public void Draw_Manual_Done() {
-			_liveQueue.Push(VRamQueue.Op.NOP);
+			_liveQueue.Push(Queue.Op<NOP>().Id);
 		}
 		[CodeSection]
 		private void Handler() {
 			_liveQueue.Unsafe_Pop(Y);
 			X.Set(_liveQueue.Unsafe_Peek(Y)); //Number of bytes of data
-			Loop.While(() => X.NotEquals(VRamQueue.Op.NOP), () => {
+			Loop.While(() => X.NotEquals(Queue.Op<NOP>().Id), () => {
 				_liveQueue.Unsafe_Pop(Y);
 				A.Set(_liveQueue.Unsafe_Peek(Y));
 				Loop.Descend(X, () => {

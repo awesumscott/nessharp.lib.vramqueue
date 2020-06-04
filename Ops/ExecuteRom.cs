@@ -16,7 +16,7 @@ namespace NESSharp.Lib.VRamQueue.Ops {
 			_liveQueue = queue;
 			_executeLoopContinue = execContinue;
 			_opExecuteRom = handlerListAdd(LabelFor(Handler));
-			_ptrRomStart = Ptr.New("VRamQueue_ExecuteRom_ptrRomStart");
+			_ptrRomStart = Ptr.New(GlobalZp, "VRamQueue_ExecuteRom_ptrRomStart");
 		}
 		public void Write(Core.Address ramStart, U8 len) {
 			_liveQueue.Write(Y, () => {

@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using NESSharp.Common;
+﻿using NESSharp.Common;
 using NESSharp.Core;
+using System;
 using static NESSharp.Core.AL;
 
 namespace NESSharp.Lib.VRamQueue.Ops {
 	public class FromAddress {
 		private U8 _opFromAddress;
 		private LiveQueue _liveQueue;
-		private OpLabel _executeLoopContinue;
-		public FromAddress(Func<OpLabel, U8> handlerListAdd, LiveQueue queue, OpLabel execContinue, OpLabel _) {
+		private Label _executeLoopContinue;
+		public FromAddress(Func<Label, U8> handlerListAdd, LiveQueue queue, Label execContinue, Label _) {
 			_liveQueue = queue;
 			_executeLoopContinue = execContinue;
 			_opFromAddress = handlerListAdd(LabelFor(Handler));
@@ -23,7 +21,7 @@ namespace NESSharp.Lib.VRamQueue.Ops {
 				_liveQueue.Push(len);
 			});
 		}
-		public void Write(OpLabel lbl, U8 len) {
+		public void Write(Label lbl, U8 len) {
 			_liveQueue.Write(Y, () => {
 				_liveQueue.Push(_opFromAddress);
 				_liveQueue.Push(lbl.Lo());
@@ -31,7 +29,7 @@ namespace NESSharp.Lib.VRamQueue.Ops {
 				_liveQueue.Push(len);
 			});
 		}
-		public void WriteROM(OpLabel lbl, U8 len) {
+		public void WriteROM(Label lbl, U8 len) {
 			Raw(_opFromAddress);
 			Raw(lbl.Lo());
 			Raw(lbl.Hi());

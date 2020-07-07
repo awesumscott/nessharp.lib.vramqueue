@@ -50,11 +50,11 @@ namespace NESSharp.Lib.VRamQueue.V2 {
 		private List<VRamQueueOp> _ops;
 		private VByte _done;
 		public LiveQueue _liveQueue;
-		private OpLabel _executeLoopContinue;
-		private OpLabel _executeLoopBreak;
+		private Label _executeLoopContinue;
+		private Label _executeLoopBreak;
 		
 		private U8 _optionId = 0;
-		private List<OpLabel> _opHandlers;
+		private List<Label> _opHandlers;
 		private LabelList HandlerList;
 
 		public T? Op<T>() where T : VRamQueueOp, new() {
@@ -74,19 +74,20 @@ namespace NESSharp.Lib.VRamQueue.V2 {
 		}
 		[DataSection]
 		public void HandlerAddresses() => HandlerList.WriteList();
-
+		
+		//TODO: this doesn't have to be aligned to a page, so allow scenes to use this directly with their ram refs
 		public void Setup(U16 pageStart, U8 length) {
 			_done = VByte.New(Ram, $"{nameof(VRamQueue)}{nameof(_done)}");
-			_executeLoopContinue = Label.New();
-			_executeLoopBreak = Label.New();
+			_executeLoopContinue = Labels.New();
+			_executeLoopBreak = Labels.New();
 
 			var VRAM = Ram.Allocate(Addr(pageStart), Addr((U16)(pageStart + 0xFF)));
 			_ops = new List<VRamQueueOp>();
 			_ops.Add(new NOP());
-			_opHandlers = new List<OpLabel>();
+			_opHandlers = new List<Label>();
 			_liveQueue = LiveQueue.New(Zp, Ram, VRAM, length, $"{nameof(VRamQueue)}{nameof(_liveQueue)}", Op<Stop>()?.Id ?? 255);
 		}
-		private U8 AddHandler(OpLabel handlerLabel) {
+		private U8 AddHandler(Label handlerLabel) {
 			_opHandlers.Add(handlerLabel);
 			return _optionId++;
 		}

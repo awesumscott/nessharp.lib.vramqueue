@@ -10,8 +10,8 @@ namespace NESSharp.Lib.VRamQueue.Ops {
 		private U8 _opHoriz;
 		private U8 _opVert;
 		private LiveQueue _liveQueue;
-		private OpLabel _executeLoopContinue;
-		public Increment(Func<OpLabel, U8> handlerListAdd, LiveQueue queue, OpLabel execContinue, OpLabel _) {
+		private Label _executeLoopContinue;
+		public Increment(Func<Label, U8> handlerListAdd, LiveQueue queue, Label execContinue, Label _) {
 			_liveQueue = queue;
 			_executeLoopContinue = execContinue;
 			_opHoriz = handlerListAdd(LabelFor(Handler_Horiz));

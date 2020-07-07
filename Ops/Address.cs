@@ -9,8 +9,8 @@ namespace NESSharp.Lib.VRamQueue.Ops {
 	public class Address {
 		private U8 _opAddr;
 		private LiveQueue _liveQueue;
-		private OpLabel _executeLoopContinue;
-		public Address(Func<OpLabel, U8> handlerListAdd, LiveQueue queue, OpLabel execContinue, OpLabel _) {
+		private Label _executeLoopContinue;
+		public Address(Func<Label, U8> handlerListAdd, LiveQueue queue, Label execContinue, Label _) {
 			_liveQueue = queue;
 			_executeLoopContinue = execContinue;
 			_opAddr = handlerListAdd(LabelFor(Handler));

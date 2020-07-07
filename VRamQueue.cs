@@ -18,8 +18,8 @@ namespace NESSharp.Lib.VRamQueue {
 	public class VRamQueue : Module {
 		private VByte _done;
 		private LiveQueue _liveQueue;
-		private OpLabel _executeLoopContinue;
-		private OpLabel _executeLoopBreak;
+		private Label _executeLoopContinue;
+		private Label _executeLoopBreak;
 		//private static VWord _handlerAddress;
 		private Option[] _options;
 		
@@ -34,11 +34,12 @@ namespace NESSharp.Lib.VRamQueue {
 		private U8 _optionId = 0;
 		private LabelList HandlerList;
 
+		//TODO: this doesn't have to be aligned to a page, so allow scenes to use this directly with their ram refs
 		public void Setup(U16 pageStart, U8 length, params Option[] options) {
 			_done = VByte.New(Ram, $"{nameof(VRamQueue)}{nameof(_done)}");
 			//_handlerAddress = VWord.New(ram, "VRamQueue_handlerAddress");
-			_executeLoopContinue = Label.New();
-			_executeLoopBreak = Label.New();
+			_executeLoopContinue = Labels.New();
+			_executeLoopBreak = Labels.New();
 
 			var VRAM = Ram.Allocate(Addr(pageStart), Addr((U16)(pageStart + 0xFF)));
 			_liveQueue = LiveQueue.New(Zp, Ram, VRAM, length, $"{nameof(VRamQueue)}{nameof(_liveQueue)}", Op.Stop);
@@ -48,13 +49,13 @@ namespace NESSharp.Lib.VRamQueue {
 			OptionModules();
 			
 		}
-		private U8 AddHandler(OpLabel handlerLabel) {
+		private U8 AddHandler(Label handlerLabel) {
 			_opHandlers.Add(handlerLabel);
 			return _optionId++;
 		}
 		//[Dependencies]
 		public void OptionModules() {
-			_opHandlers = new List<OpLabel>(){
+			_opHandlers = new List<Label>(){
 				LabelFor(Handler_NOP),
 				LabelFor(Handler_Stop),
 				LabelFor(Handler_EOF),
@@ -113,7 +114,7 @@ namespace NESSharp.Lib.VRamQueue {
 			public static readonly U8 Stop			= 0x01;		//Stop Here -- Decrement index so execution will wait here until it is cleared and new commands are added to queue
 			public static readonly U8 EOF			= 0x02;		//End of frame -- increment and resume parsing next frame
 		}
-		private List<OpLabel> _opHandlers;
+		private List<Label> _opHandlers;
 		public void Reset() {
 			if (_options.Contains(Option.Pause))
 				Pause.Reset();

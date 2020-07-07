@@ -10,8 +10,8 @@ namespace NESSharp.Lib.VRamQueue.Ops {
 	public class TilesRLE {
 		private U8 _opTilesRLE;
 		private LiveQueue _liveQueue;
-		private OpLabel _executeLoopContinue;
-		public TilesRLE(Func<OpLabel, U8> handlerListAdd, LiveQueue queue, OpLabel execContinue, OpLabel _) {
+		private Label _executeLoopContinue;
+		public TilesRLE(Func<Label, U8> handlerListAdd, LiveQueue queue, Label execContinue, Label _) {
 			_liveQueue = queue;
 			_executeLoopContinue = execContinue;
 			_opTilesRLE = handlerListAdd(LabelFor(Handler));

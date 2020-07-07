@@ -10,10 +10,10 @@ namespace NESSharp.Lib.VRamQueue.V2.Ops {
 	public class ExecuteRom : VRamQueueOp {
 		private U8 _opExecuteRom;
 		private LiveQueue _liveQueue;
-		private OpLabel _executeLoopContinue;
+		private Label _executeLoopContinue;
 		private Ptr _ptrRomStart;
 		public override void AddHandlers() => Queue.Add(Handler);
-		public ExecuteRom(Func<OpLabel, U8> handlerListAdd, LiveQueue queue, OpLabel execContinue, OpLabel _) {
+		public ExecuteRom(Func<Label, U8> handlerListAdd, LiveQueue queue, Label execContinue, Label _) {
 			_liveQueue = queue;
 			_executeLoopContinue = execContinue;
 			_opExecuteRom = handlerListAdd(LabelFor(Handler));
@@ -27,14 +27,14 @@ namespace NESSharp.Lib.VRamQueue.V2.Ops {
 				_liveQueue.Push(len);
 			});
 		}
-		public void Write(OpLabel lbl, U8 len) {
+		public void Write(Label lbl, U8 len) {
 			_liveQueue.Write(Y, () => {
 				_liveQueue.Push(_opExecuteRom);
 				_liveQueue.Push(lbl.Lo());
 				_liveQueue.Push(lbl.Hi());
 			});
 		}
-		public void WriteROM(OpLabel lbl, U8 len) {
+		public void WriteROM(Label lbl, U8 len) {
 			Raw(_opExecuteRom);
 			Raw(lbl.Lo());
 			Raw(lbl.Hi());

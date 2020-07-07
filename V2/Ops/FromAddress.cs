@@ -20,7 +20,7 @@ namespace NESSharp.Lib.VRamQueue.V2.Ops {
 				_liveQueue.Push(len);
 			});
 		}
-		public void Write(OpLabel lbl, U8 len) {
+		public void Write(Label lbl, U8 len) {
 			_liveQueue.Write(Y, () => {
 				_liveQueue.Push(Id);
 				_liveQueue.Push(lbl.Lo());
@@ -28,7 +28,7 @@ namespace NESSharp.Lib.VRamQueue.V2.Ops {
 				_liveQueue.Push(len);
 			});
 		}
-		public void WriteROM(OpLabel lbl, U8 len) {
+		public void WriteROM(Label lbl, U8 len) {
 			Raw(Id);
 			Raw(lbl.Lo());
 			Raw(lbl.Hi());

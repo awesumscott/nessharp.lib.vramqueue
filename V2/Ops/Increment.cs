@@ -9,7 +9,7 @@ namespace NESSharp.Lib.VRamQueue.V2.Ops {
 		private U8 _opVert;
 		private LiveQueue _liveQueue;
 		public override void AddHandlers() => Queue.Add(Handler_Horiz);
-		public Increment(Func<OpLabel, U8> handlerListAdd, LiveQueue queue) {
+		public Increment(Func<Label, U8> handlerListAdd, LiveQueue queue) {
 			//TODO: add a way to store multiple op IDs, one per callback
 			_liveQueue = queue;
 			_opHoriz = handlerListAdd(LabelFor(Handler_Horiz));

@@ -9,8 +9,8 @@ namespace NESSharp.Lib.VRamQueue.Ops {
 	public class Palettes {
 		private U8 _opPalettes;
 		private LiveQueue _liveQueue;
-		private OpLabel _executeLoopContinue;
-		public Palettes(Func<OpLabel, U8> handlerListAdd, LiveQueue queue, OpLabel execContinue, OpLabel _) {
+		private Label _executeLoopContinue;
+		public Palettes(Func<Label, U8> handlerListAdd, LiveQueue queue, Label execContinue, Label _) {
 			_liveQueue = queue;
 			_executeLoopContinue = execContinue;
 			_opPalettes = handlerListAdd(LabelFor(Handler));
@@ -22,7 +22,7 @@ namespace NESSharp.Lib.VRamQueue.Ops {
 				_liveQueue.Push(addr.Hi);
 			});
 		}
-		public void Write(OpLabel lbl) {
+		public void Write(Label lbl) {
 			_liveQueue.Write(Y, () => {
 				_liveQueue.Push(_opPalettes);
 				_liveQueue.Push(lbl.Lo());

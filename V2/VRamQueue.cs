@@ -131,7 +131,7 @@ namespace NESSharp.Lib.VRamQueue.V2 {
 
 			var pause = Op<Pause>();
 			_liveQueue.Read(Y, () => {
-				Loop.Infinite(() => {
+				Loop.Infinite(_ => {
 					if (pause != null) {
 						pause.ExecuteBlockWrapper(loopBody);
 					} else {

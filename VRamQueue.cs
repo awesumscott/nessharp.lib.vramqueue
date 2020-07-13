@@ -160,7 +160,7 @@ namespace NESSharp.Lib.VRamQueue {
 			};
 
 			_liveQueue.Read(Y, () => {
-				Loop.Infinite(() => {
+				Loop.Infinite(_ => {
 					if (_options.Contains(Option.Pause)) {
 						Pause.ExecuteBlockWrapper(loopBody);
 					} else {
@@ -213,14 +213,14 @@ namespace NESSharp.Lib.VRamQueue {
 		}
 		public Stream CopyTo(Ptr dest) { //, RegisterX x) {
 			_ptrDest.PointTo(dest);
-			Loop.AscendWhile(Y.Set(0), () => Y.NotEquals(_len), () => {
+			Loop.AscendWhile(Y.Set(0), () => Y.NotEquals(_len), _ => {
 				_ptrDest[Y].Set(A.Set(_ptrSrc[Y]));
 			});
 			return this;
 		}
 		public Stream CopyTo(VByte dest) { //, RegisterX x) {
 			_ptrDest.PointTo(dest);
-			Loop.AscendWhile(Y.Set(0), () => Y.NotEquals(_len), () => {
+			Loop.AscendWhile(Y.Set(0), () => Y.NotEquals(_len), _ => {
 				_ptrDest[Y].Set(A.Set(_ptrSrc[Y]));
 			});
 			return this;

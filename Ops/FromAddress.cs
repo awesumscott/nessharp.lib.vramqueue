@@ -21,6 +21,14 @@ namespace NESSharp.Lib.VRamQueue.Ops {
 				_liveQueue.Push(len);
 			});
 		}
+		public void Write(Core.VWord ramStart, U8 len) {
+			_liveQueue.Write(Y, () => {
+				_liveQueue.Push(_opFromAddress);
+				_liveQueue.Push(ramStart.Lo);
+				_liveQueue.Push(ramStart.Hi);
+				_liveQueue.Push(len);
+			});
+		}
 		public void Write(Label lbl, U8 len) {
 			_liveQueue.Write(Y, () => {
 				_liveQueue.Push(_opFromAddress);

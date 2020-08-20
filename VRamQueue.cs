@@ -124,7 +124,7 @@ namespace NESSharp.Lib.VRamQueue {
 		public void Push(U8 val) {
 			_liveQueue.Push(val);
 		}
-		public void Push(VByte val) {
+		public void Push(IOperand val) {
 			_liveQueue.Push(val);
 		}
 		public void Push(Func<RegisterA> val) {

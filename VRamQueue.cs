@@ -24,6 +24,7 @@ namespace NESSharp.Lib.VRamQueue {
 		private Option[] _options;
 		
 		public Ops.Address Address;
+		public Ops.CallSub CallSub;
 		public Ops.Increment Increment;
 		public Ops.Pause Pause;
 		public Ops.Tile Tile;
@@ -65,6 +66,10 @@ namespace NESSharp.Lib.VRamQueue {
 				Address = new Ops.Address(AddHandler, _liveQueue, _executeLoopContinue, _executeLoopBreak);
 				Include.Module(Address);
 			}
+			if (_options.Contains(Option.CallSub)) {
+				CallSub = new Ops.CallSub(AddHandler, _liveQueue, _executeLoopContinue, _executeLoopBreak);
+				Include.Module(CallSub);
+			}
 			if (_options.Contains(Option.Increment)) {
 				Increment = new Ops.Increment(AddHandler, _liveQueue, _executeLoopContinue, _executeLoopBreak);
 				Include.Module(Increment);
@@ -99,6 +104,7 @@ namespace NESSharp.Lib.VRamQueue {
 
 		public enum Option {
 			Addr,			//Set PPU Address (U16 addr)
+			CallSub,		//Write (sub addr)-1 Lo,Hi
 			Increment,		//Options for incrementing PPU address writes
 			Tile,			//Write Data (U8 tile)
 			TileArray,		//Write Sequence of Data (U8 len, U8[] tiles)

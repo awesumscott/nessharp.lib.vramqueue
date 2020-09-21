@@ -15,7 +15,7 @@ namespace NESSharp.Lib.VRamQueue.Ops {
 			_executeLoopContinue = execContinue;
 			_opTile = handlerListAdd(LabelFor(Handler));
 		}
-		public void DrawTile(U8 tile) {
+		public void DrawTile(IOperand tile) {
 			_liveQueue.Write(Y, () => {
 				_liveQueue.Push(_opTile);
 				_liveQueue.Push(tile);

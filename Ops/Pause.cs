@@ -34,18 +34,15 @@ namespace NESSharp.Lib.VRamQueue.Ops {
 		}
 
 		public void ExecuteBlockWrapper(Action block) {
-			If(	Option(() => _pauseCount.Equals(0), () => {
-					block();
-				}),
-				Default(() => {
+			If.Block(c => c
+				.True(() => _pauseCount.Equals(0), block)
+				.Else(() => {
 					_pauseCount.Decrement();
 					GoTo(_executeLoopBreak);
 				})
 			);
 		}
-		
-		public void Reset() {
-			_pauseCount.Set(0);
-		}
+
+		public void Reset() => _pauseCount.Set(0);
 	}
 }

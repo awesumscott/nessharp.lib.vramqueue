@@ -209,29 +209,29 @@ namespace NESSharp.Lib.VRamQueue {
 		//}
 	}
 
-	public class Stream : IDisposable {
-		private Ptr _ptrSrc = TempPtr0;
-		private Ptr _ptrDest = TempPtr1;
-		private VByte _len;
-		public Stream(Action action, VByte len) {
-			_ptrSrc.PointTo(LabelFor(action));
-			_len = len;
-		}
-		public Stream CopyTo(Ptr dest) { //, RegisterX x) {
-			_ptrDest.PointTo(dest);
-			Loop.AscendWhile(Y.Set(0), () => Y.NotEquals(_len), _ => {
-				_ptrDest[Y].Set(A.Set(_ptrSrc[Y]));
-			});
-			return this;
-		}
-		public Stream CopyTo(VByte dest) { //, RegisterX x) {
-			_ptrDest.PointTo(dest);
-			Loop.AscendWhile(Y.Set(0), () => Y.NotEquals(_len), _ => {
-				_ptrDest[Y].Set(A.Set(_ptrSrc[Y]));
-			});
-			return this;
-		}
+	//public class Stream : IDisposable {
+	//	private Ptr _ptrSrc = TempPtr0;
+	//	private Ptr _ptrDest = TempPtr1;
+	//	private VByte _len;
+	//	public Stream(Action action, VByte len) {
+	//		_ptrSrc.PointTo(LabelFor(action));
+	//		_len = len;
+	//	}
+	//	public Stream CopyTo(Ptr dest) { //, RegisterX x) {
+	//		_ptrDest.PointTo(dest);
+	//		Loop.AscendWhile(Y.Set(0), () => Y.NotEquals(_len), _ => {
+	//			_ptrDest[Y].Set(A.Set(_ptrSrc[Y]));
+	//		});
+	//		return this;
+	//	}
+	//	public Stream CopyTo(VByte dest) { //, RegisterX x) {
+	//		_ptrDest.PointTo(dest);
+	//		Loop.AscendWhile(Y.Set(0), () => Y.NotEquals(_len), _ => {
+	//			_ptrDest[Y].Set(A.Set(_ptrSrc[Y]));
+	//		});
+	//		return this;
+	//	}
 
-		public void Dispose() {}
-	}
+	//	public void Dispose() {}
+	//}
 }

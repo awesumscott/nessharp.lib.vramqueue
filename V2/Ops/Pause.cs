@@ -29,10 +29,9 @@ namespace NESSharp.Lib.VRamQueue.V2.Ops {
 		}
 
 		public void ExecuteBlockWrapper(Action block) {
-			If(	Option(() => _pauseCount.Equals(0), () => {
-					block();
-				}),
-				Default(() => {
+			If.Block(c => c
+				.True(() => _pauseCount.Equals(0), block)
+				.Else(() => {
 					_pauseCount.Decrement();
 					Queue.Break();
 				})

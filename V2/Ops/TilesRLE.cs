@@ -36,10 +36,10 @@ namespace NESSharp.Lib.VRamQueue.V2.Ops {
 		private void Handler() {
 			_liveQueue.Unsafe_Pop(Y);
 			X.Set(_liveQueue.Unsafe_Peek(Y)); //Number of bytes of data
-			Loop.While(() => X.NotEquals(Queue.Op<NOP>().Id), _ => {
+			Loop.While_Pre(() => X.NotEquals(Queue.Op<NOP>().Id), _ => {
 				_liveQueue.Unsafe_Pop(Y);
 				A.Set(_liveQueue.Unsafe_Peek(Y));
-				Loop.Descend(X, _ => {
+				Loop.Descend_Post(X, _ => {
 					NES.PPU.Data.Set(A);
 				});
 				_liveQueue.Unsafe_Pop(Y);

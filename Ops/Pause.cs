@@ -1,20 +1,18 @@
 ﻿using NESSharp.Common;
 using NESSharp.Core;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using static NESSharp.Core.AL;
 
 namespace NESSharp.Lib.VRamQueue.Ops {
 	public class Pause {
-		private U8 _opPause;
-		private LiveQueue _liveQueue;
-		private Label _executeLoopBreak;
-		private VByte _pauseCount;
+		private readonly U8 _opPause;
+		private readonly LiveQueue _liveQueue;
+		private readonly Label _executeLoopBreak;
+		private readonly VByte _pauseCount;
 		public Pause(Func<Label, U8> handlerListAdd, LiveQueue queue, Label _, Label execBreak) {
 			_liveQueue = queue;
 			_executeLoopBreak = execBreak;
-			_pauseCount = VByte.New(GlobalRam, "VRamQueue_pauseCount");
+			_pauseCount = VByte.New(NES.ram, "VRamQueue_pauseCount");
 			_opPause = handlerListAdd(LabelFor(Handler));
 		}
 		public void For(U8 frames) {

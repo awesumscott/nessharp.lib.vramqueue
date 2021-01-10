@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Text;
-using NESSharp.Common;
+﻿using NESSharp.Common;
 using NESSharp.Core;
+using System;
 using static NESSharp.Core.AL;
 
 namespace NESSharp.Lib.VRamQueue.V2.Ops {
@@ -17,7 +14,7 @@ namespace NESSharp.Lib.VRamQueue.V2.Ops {
 			_liveQueue = queue;
 			_executeLoopContinue = execContinue;
 			_opExecuteRom = handlerListAdd(LabelFor(Handler));
-			_ptrRomStart = Ptr.New(GlobalZp, "VRamQueue_ExecuteRom_ptrRomStart");
+			_ptrRomStart = Ptr.New(NES.zp, "VRamQueue_ExecuteRom_ptrRomStart");
 		}
 		public void Write(Core.Address ramStart, U8 len) {
 			_liveQueue.Write(Y, () => {

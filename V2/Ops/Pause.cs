@@ -7,9 +7,9 @@ using static NESSharp.Core.AL;
 
 namespace NESSharp.Lib.VRamQueue.V2.Ops {
 	public class Pause : VRamQueueOp {
-		private VByte _pauseCount;
+		private readonly VByte _pauseCount;
 		public Pause() {
-			_pauseCount = VByte.New(GlobalRam, "VRamQueue_pauseCount");
+			_pauseCount = VByte.New(NES.ram, "VRamQueue_pauseCount");
 		}
 		public override void AddHandlers() => Queue.Add(Handler);
 		public void For(U8 frames) {

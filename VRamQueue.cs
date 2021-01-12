@@ -36,7 +36,7 @@ namespace NESSharp.Lib.VRamQueue {
 		private LabelList HandlerList;
 
 		//TODO: this doesn't have to be aligned to a page, so allow scenes to use this directly with their ram refs
-		public void Setup(U16 pageStart, U8 length, params Option[] options) {
+		public void SetupAligned(U16 pageStart, U8 length, params Option[] options) {
 			_done = VByte.New(Ram, $"{nameof(VRamQueue)}{nameof(_done)}");
 			//_handlerAddress = VWord.New(ram, "VRamQueue_handlerAddress");
 			_executeLoopContinue = Labels.New();
@@ -48,8 +48,21 @@ namespace NESSharp.Lib.VRamQueue {
 			_options = options ?? Array.Empty<Option>();
 
 			OptionModules();
-			
 		}
+		public void Setup(int length, params Option[] options) {
+			_done = VByte.New(Ram, $"{nameof(VRamQueue)}{nameof(_done)}");
+			//_handlerAddress = VWord.New(ram, "VRamQueue_handlerAddress");
+			_executeLoopContinue = Labels.New();
+			_executeLoopBreak = Labels.New();
+
+			_liveQueue = LiveQueue.New(Zp, Ram, Ram, length, $"{nameof(VRamQueue)}{nameof(_liveQueue)}", Op.Stop);
+
+			_options = options ?? Array.Empty<Option>();
+
+			OptionModules();
+		}
+
+
 		private U8 AddHandler(Label handlerLabel) {
 			_opHandlers.Add(handlerLabel);
 			return _optionId++;

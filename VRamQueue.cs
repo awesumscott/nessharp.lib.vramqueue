@@ -42,7 +42,7 @@ namespace NESSharp.Lib.VRamQueue {
 			_executeLoopContinue = Labels.New();
 			_executeLoopBreak = Labels.New();
 
-			var VRAM = Ram.Allocate(Addr(pageStart), Addr((U16)(pageStart + 0xFF)));
+			var VRAM = Ram.Allocate(Addr(pageStart), Addr((U16)(pageStart + 0xFF)), "VRAM");
 			_liveQueue = LiveQueue.New(Zp, Ram, VRAM, length, $"{nameof(VRamQueue)}{nameof(_liveQueue)}", Op.Stop);
 
 			_options = options ?? Array.Empty<Option>();

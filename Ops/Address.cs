@@ -15,19 +15,18 @@ namespace NESSharp.Lib.VRamQueue.Ops {
 			_executeLoopContinue = execContinue;
 			_opAddr = handlerListAdd(LabelFor(Handler));
 		}
-		public void Set(U16 addr) {
+		public void SetU16(Core.Address addr) {
 			_liveQueue.Write(Y, () => {
 				_liveQueue.Push(_opAddr);
 				_liveQueue.Push(addr.Hi);
 				_liveQueue.Push(addr.Lo);
 			});
 		}
-		public void Set(VarN n) {
-			if (n.Size != 2) throw new Exception("Value must be 2 bytes");
+		public void SetWord(VWord n) {
 			_liveQueue.Write(Y, () => {
 				_liveQueue.Push(_opAddr);
-				_liveQueue.Push(n.Address[1]);
-				_liveQueue.Push(n.Address[0]);
+				_liveQueue.Push(n.Hi);
+				_liveQueue.Push(n.Lo);
 			});
 		}
 

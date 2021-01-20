@@ -174,7 +174,7 @@ namespace NESSharp.Lib.VRamQueue {
 				Comment("Use current Op to find the op handler address, then indirect JMP");
 				HandlerList.GoTo(X.Set(_liveQueue.Peek()));
 
-				Use(_executeLoopContinue);
+				_executeLoopContinue.Write();
 				_liveQueue.Pop();
 			}
 
@@ -186,7 +186,7 @@ namespace NESSharp.Lib.VRamQueue {
 						loopBody();
 					}
 				});
-				Use(_executeLoopBreak);
+				_executeLoopBreak.Write();
 			});
 		}
 		

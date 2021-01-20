@@ -54,7 +54,7 @@ namespace NESSharp.Lib.VRamQueue.V2.Ops {
 			Loop.Do_old(_ => {
 				_liveQueue.Unsafe_Pop(Y);
 				NES.PPU.Data.Set(_liveQueue.Unsafe_Peek(Y));
-				X--;
+				X.Dec();
 			}).While(() => X.NotEquals(0));
 			GoTo(_executeLoopContinue);
 		}

@@ -27,7 +27,7 @@ namespace NESSharp.Lib.VRamQueue.Ops {
 			Comment("Pause");
 			_liveQueue.Unsafe_Pop(Y);
 			_pauseCount.Set(_liveQueue.Unsafe_Peek(Y));
-			Y++;
+			Y.Increment();
 			GoTo(_executeLoopBreak);
 		}
 
@@ -35,7 +35,7 @@ namespace NESSharp.Lib.VRamQueue.Ops {
 			If.Block(c => c
 				.True(() => _pauseCount.Equals(0), block)
 				.Else(() => {
-					_pauseCount.Decrement();
+					_pauseCount.Dec();
 					GoTo(_executeLoopBreak);
 				})
 			);

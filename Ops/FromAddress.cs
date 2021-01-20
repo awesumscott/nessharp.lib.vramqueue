@@ -56,7 +56,7 @@ namespace NESSharp.Lib.VRamQueue.Ops {
 				Y.Set(0);
 				Loop.Descend_Post(X, _ => {
 					NES.PPU.Data.Set(TempPtr0[Y]);
-					Y++;
+					Y.Increment();
 				});
 			});
 

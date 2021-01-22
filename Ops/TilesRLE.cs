@@ -27,7 +27,7 @@ namespace NESSharp.Lib.VRamQueue.Ops {
 		}
 		public void DrawROM(params U8[] tile) {
 			Raw(_opTilesRLE);
-			Raw(tile.Select(x => (byte)x).ToArray());
+			Raw(tile);
 			Raw(VRamQueue.Op.NOP);
 		}
 		public void Draw_Manual() {

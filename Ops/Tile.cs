@@ -21,6 +21,12 @@ namespace NESSharp.Lib.VRamQueue.Ops {
 				_liveQueue.Push(tile);
 			});
 		}
+		public void DrawTile(Func<IOperand> tile) {
+			_liveQueue.Write(Y, () => {
+				_liveQueue.Push(_opTile);
+				_liveQueue.Push(tile());
+			});
+		}
 		[CodeSection]
 		private void Handler() {
 			_liveQueue.Unsafe_Pop(Y);

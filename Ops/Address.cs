@@ -29,6 +29,13 @@ namespace NESSharp.Lib.VRamQueue.Ops {
 				_liveQueue.Push(n.Lo);
 			});
 		}
+		public void SetIOperands(Func<IOperand> Hi, Func<IOperand> Lo) {
+			_liveQueue.Write(Y, () => {
+				_liveQueue.Push(_opAddr);
+				_liveQueue.Push(Hi());
+				_liveQueue.Push(Lo());
+			});
+		}
 
 		public void SetROM(U16 addr) {
 			Raw(_opAddr);

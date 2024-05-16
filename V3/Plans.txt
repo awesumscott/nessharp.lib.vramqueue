@@ -1,0 +1,15 @@
+﻿VRamQueue Attempt 3
+---------------------------------
+
+-SCRAP EVERYTHING!
+-Ops
+	-JSR
+		-Push next two bytes for RTS jump
+	-Banked JSR
+		-Push and restore bank
+		-Push next two bytes for RTS jump
+-Ops are added as modules individually, outside of VRQ lib,
+	and added in and accessed by:
+	VramQueue.Op<ModuleType>()
+-Get rid of all that terrible manual push livequeue crap!
+	No good idea for a replacement yet, nevertheless it must go

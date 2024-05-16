@@ -36,13 +36,13 @@ namespace NESSharp.Lib.VRamQueue {
 		private LabelList HandlerList;
 
 		//TODO: this doesn't have to be aligned to a page, so allow scenes to use this directly with their ram refs
-		public void SetupAligned(U16 pageStart, U8 length, params Option[] options) {
+		public void SetupAligned(Address pageStart, U8 length, params Option[] options) {
 			_done = VByte.New(Ram, $"{nameof(VRamQueue)}{nameof(_done)}");
 			//_handlerAddress = VWord.New(ram, "VRamQueue_handlerAddress");
 			_executeLoopContinue = Labels.New();
 			_executeLoopBreak = Labels.New();
 
-			var VRAM = Ram.Allocate(Addr(pageStart), Addr((U16)(pageStart + 0xFF)), "VRAM");
+			var VRAM = Ram.Allocate(pageStart, Addr((U16)(pageStart + 0xFF)), "VRAM");
 			_liveQueue = LiveQueue.New(Zp, Ram, VRAM, length, $"{nameof(VRamQueue)}{nameof(_liveQueue)}", Op.Stop);
 
 			_options = options ?? Array.Empty<Option>();

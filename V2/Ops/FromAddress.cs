@@ -45,9 +45,9 @@ namespace NESSharp.Lib.VRamQueue.V2.Ops {
 
 			Stack.Preserve(Y, () => {
 				Y.Set(0);
-				Loop.Descend_Post(X, _ => {
+				Loop.Descend_PostCondition_PostDec(X, _ => {
 					NES.PPU.Data.Set(TempPtr0[Y]);
-					Y.Increment();
+					Y.Inc();
 				});
 			});
 

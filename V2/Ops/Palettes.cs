@@ -47,7 +47,7 @@ namespace NESSharp.Lib.VRamQueue.V2.Ops {
 			Stack.Preserve(Y, () => {
 				Y.Set(0);
 				NES.PPU.SetAddress(NES.MemoryMap.Palette);
-				Loop.AscendWhile(Y.Set(0), () => Y.NotEquals(32), _ => {
+				Loop.While_PostCondition_PostInc(Y.Set(0), () => Y.NotEquals(32), _ => {
 					NES.PPU.Data.Set(TempPtr0[Y]);
 				});
 			});

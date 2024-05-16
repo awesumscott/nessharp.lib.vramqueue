@@ -44,13 +44,13 @@ namespace NESSharp.Lib.VRamQueue.Ops {
 			_liveQueue.Unsafe_Pop(Y);
 			A.Set(_liveQueue.Unsafe_Peek(Y)); //Number of bytes of data
 
-			Loop.While_Pre(() => A.NotEquals(VRamQueue.Op.NOP), _ => { });
+			Loop.While_PreCondition_NoInc(() => A.NotEquals(VRamQueue.Op.NOP), _ => { });
 
 			Stack.Preserve(Y, () => {
 				Y.Set(0);
-				Loop.Descend_Post(X, _ => {
+				Loop.Descend_PostCondition_PostDec(X, _ => {
 					NES.PPU.Data.Set(TempPtr0[Y]);
-					Y.Increment();
+					Y.Inc();
 				});
 			});
 

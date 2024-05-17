@@ -3,7 +3,7 @@ using NESSharp.Core;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using static NESSharp.Core.AL;
+using static NESSharp.Core.CPU6502;
 
 namespace NESSharp.Lib.VRamQueue.Ops {
 	public class Address {
@@ -13,7 +13,7 @@ namespace NESSharp.Lib.VRamQueue.Ops {
 		public Address(Func<Label, U8> handlerListAdd, LiveQueue queue, Label execContinue, Label _) {
 			_liveQueue = queue;
 			_executeLoopContinue = execContinue;
-			_opAddr = handlerListAdd(LabelFor(Handler));
+			_opAddr = handlerListAdd(AL.LabelFor(Handler));
 		}
 		public void SetU16(Core.Address addr) {
 			_liveQueue.Write(Y, () => {
@@ -38,8 +38,8 @@ namespace NESSharp.Lib.VRamQueue.Ops {
 		}
 
 		public void SetROM(U16 addr) {
-			Raw(_opAddr);
-			Raw(addr.Hi, addr.Lo);
+			AL.Raw(_opAddr);
+			AL.Raw(addr.Hi, addr.Lo);
 		}
 
 		[CodeSection]
@@ -49,7 +49,7 @@ namespace NESSharp.Lib.VRamQueue.Ops {
 			NES.PPU.Address.Set(_liveQueue.Unsafe_Peek(Y));
 			_liveQueue.Unsafe_Pop(Y);
 			NES.PPU.Address.Set(_liveQueue.Unsafe_Peek(Y));
-			GoTo(_executeLoopContinue);
+			AL.GoTo(_executeLoopContinue);
 		}
 	}
 }

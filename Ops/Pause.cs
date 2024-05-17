@@ -1,7 +1,7 @@
 ﻿using NESSharp.Common;
 using NESSharp.Core;
 using System;
-using static NESSharp.Core.AL;
+using static NESSharp.Core.CPU6502;
 
 namespace NESSharp.Lib.VRamQueue.Ops {
 	public class Pause {
@@ -13,7 +13,7 @@ namespace NESSharp.Lib.VRamQueue.Ops {
 			_liveQueue = queue;
 			_executeLoopBreak = execBreak;
 			_pauseCount = VByte.New(NES.ram, "VRamQueue_pauseCount");
-			_opPause = handlerListAdd(LabelFor(Handler));
+			_opPause = handlerListAdd(AL.LabelFor(Handler));
 		}
 		public void For(U8 frames) {
 			_liveQueue.Write(Y, () => {
@@ -24,11 +24,11 @@ namespace NESSharp.Lib.VRamQueue.Ops {
 
 		[CodeSection]
 		private void Handler() {
-			Comment("Pause");
+			AL.Comment("Pause");
 			_liveQueue.Unsafe_Pop(Y);
 			_pauseCount.Set(_liveQueue.Unsafe_Peek(Y));
 			Y.Inc();
-			GoTo(_executeLoopBreak);
+			AL.GoTo(_executeLoopBreak);
 		}
 
 		public void ExecuteBlockWrapper(Action block) {
@@ -36,7 +36,7 @@ namespace NESSharp.Lib.VRamQueue.Ops {
 				.True(() => _pauseCount.Equals(0), block)
 				.Else(() => {
 					_pauseCount.Dec();
-					GoTo(_executeLoopBreak);
+					AL.GoTo(_executeLoopBreak);
 				})
 			);
 		}
